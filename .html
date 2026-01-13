@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexVerse Color Palette</title>
+<style>
+  body {
+    background-color: #121418;
+    color: #E4E6EB;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+  }
+
+  h1 {
+    color: #D4AF37;
+    margin-bottom: 20px;
+  }
+
+  .palette {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  .color-card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+
+  .swatch {
+    height: 120px;
+  }
+
+  .info {
+    background-color: #1A1D23;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .gradient {
+    background: linear-gradient(135deg, #E1C16E, #B8860B);
+  }
+</style>
+</head>
+<body>
+  <h1>🎨 NexVerse Dark Gold Theme</h1>
+
+  <div class="palette">
+    <div class="color-card">
+      <div class="swatch" style="background-color:#121418;"></div>
+      <div class="info">Background<br>#121418</div>
+    </div>
+
+    <div class="color-card">
+      <div class="swatch" style="background-color:#1E2430;"></div>
+      <div class="info">Received Bubble<br>#1E2430</div>
+    </div>
+
+    <div class="color-card">
+      <div class="swatch" style="background-color:#D4AF37;"></div>
+      <div class="info">Primary Gold<br>#D4AF37</div>
+    </div>
+
+    <div class="color-card">
+      <div class="swatch" style="background-color:#CBA135;"></div>
+      <div class="info">Accent Gold<br>#CBA135</div>
+    </div>
+
+    <div class="color-card">
+      <div class="swatch gradient"></div>
+      <div class="info">Gold Gradient<br>#E1C16E → #B8860B</div>
+    </div>
+
+    <div class="color-card">
+      <div class="swatch" style="background-color:#E4E6EB;"></div>
+      <div class="info">Text (Primary)<br>#E4E6EB</div>
+    </div>
+
+    <div class="color-card">
+      <div class="swatch" style="background-color:#9DA3A8;"></div>
+      <div class="info">Text (Secondary)<br>#9DA3A8</div>
+    </div>
+
+    <div class="color-card">
+      <div class="swatch" style="background-color:#181C22;"></div>
+      <div class="info">Input Box<br>#181C22</div>
+    </div>
+
+    <div class="color-card">
+      <div class="swatch" style="background-color:#60646B;"></div>
+      <div class="info">Inactive Icon<br>#60646B</div>
+    </div>
+  </div>
+</body>
+</html>

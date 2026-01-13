@@ -1,0 +1,59 @@
+NEXVERSE MOBILE APPLICATION - COLOR GUIDE
+========================================
+
+This document serves as a reference for the color palette used throughout the Nexverse Mobile application.
+
+PRIMARY COLORS
+--------------
+Teal / Gold         : #D4AF37  (Primary brand color, headers, active states - originally WhatsApp Teal)
+Teal Dark / Gold    : #AA8C2C  (Darker shade for contrast/accents)
+Green / Gold        : #D4AF37  (Success states, secondary brand color)
+Blue                : #34B7F1  (Links, generic info indicators)
+
+MESSAGE BUBBLES
+---------------
+Incoming Bubble     : #FFFFFF  (Background for messages received from others)
+Outgoing Bubble     : #F5E8C4  (Background for messages sent by the user - Light Mode)
+Outgoing Message    : #423611  (Background for messages sent by the user - Dark Mode)
+
+BACKGROUNDS
+-----------
+Chat Background     : #ECE5DD  (Default background for chat screens)
+Screen Background   : #FFFFFF  (Standard view background in Light Mode)
+Settings Background : #F2F2F7  (Background for grouped settings lists - iOS style)
+
+TEXT COLORS
+-----------
+Text Primary        : #000000  (Main body text)
+Text Secondary      : #667781  (Subtitles, timestamps, less important info)
+Text Tertiary       : #8696A0  (Placeholders, disabled text)
+
+UI ELEMENTS
+-----------
+Border              : #E9EDEF  (Dividers, input borders)
+Divider             : #E9EDEF  (List separators)
+Unread Badge        : #D4AF37  (Background for unread count badges)
+Timestamp           : #667781  (Time text color in chat lists)
+
+STATUS INDICATORS
+-----------------
+Checkmark Single    : #8696A0  (Sent but not delivered)
+Checkmark Double    : #53BDEB  (Delivered but not read - Blue usually, but context dependent)
+Checkmark Read      : #53BDEB  (Read receipt color)
+
+INPUT & FORMS
+-------------
+Input Background    : #F0F2F5  (Background for text inputs, search bars)
+Input Border        : #D1D7DB  (Border for inputs)
+
+ICONS
+-----
+Icon Active         : #D4AF37  (Selected tab icons, active buttons)
+Icon Inactive       : #8696A0  (Unselected tab icons, inactive buttons)
+
+THEME SPECIFIC OVERRIDES
+------------------------
+Dark Mode Background: #0B141A
+Dark Mode Item      : #1F2C34 (Incoming messages, input fields in dark mode)
+Search Bar (Light)  : #EAEAEA (Updated Silver)
+Search Bar (Dark)   : #2C2C2E
