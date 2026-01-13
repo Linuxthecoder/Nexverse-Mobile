@@ -1,26 +1,48 @@
-These steps are for termux"
-  step 1 install termux and upate pkg by :
-     pkg upate and pkg upgrade 
-  step 2 install git and nodejs:
-     pkg install git 
-     pkg install nodejs
-  step 3 clone the repo using ; 
-      git clone https://github.com/Linuxthecoder/Nexverse-Mobile-app-.git
-  step 4 cd in to main expo app in tab o1 of termux ;
-      cd NexverseMoible 
-     install the node moudules by npm install 
-  step 5 start the expo app by ;
-    npx expo start 
+🚀 NEXVERSE MOBILE APP | TERMUX DEPLOYMENT GUIDE
+
+─── [ STEP 1: PREPARE ENVIRONMENT ] ───
+1. Open Termux and update system:
+   pkg update && pkg upgrade -y
+
+2. Install Git and Node.js:
+   pkg install git nodejs -y
+
+3. Clone the repository:
+   git clone https://github.com/Linuxthecoder/Nexverse-Mobile-app-.git
 
 
-BACKEND ___  
-  step 1 : cd backend 
-  setp 2 instal node moudles 
-         npm install 
-  step 3 ; update the jws packege bg :
-        npm update jwa jws jsonwebtoken
-  step 4 : start serve 
-      npm run dev 
+─── [ STEP 2: BACKEND SETUP (Tab 1) ] ───
+1. Navigate to backend folder:
+   cd Nexverse-Mobile-app-/backend
 
-      ______BOOM 
-         a
+2. Install dependencies:
+   npm install
+
+3. Update security packages:
+   npm update jwa jws jsonwebtoken
+
+4. Start the Backend Server:
+   npm run dev
+
+   (⚠️ KEEP THIS TERMINAL OPEN)
+
+
+─── [ STEP 3: FRONTEND SETUP (Tab 2) ] ───
+*Swipe from the left edge → Select 'New Session'*
+
+1. Navigate to mobile app folder:
+   cd Nexverse-Mobile-app-/NexverseMoible
+
+2. Install dependencies:
+   npm install
+
+⚠️ CRITICAL CONFIGURATION:
+   Before starting, edit your config file.
+   Change 'localhost' to your mobile IP Address.
+   (Example: http://192.168.1.XXX:5001)
+
+3. Start the Expo App:
+   npx expo start
+
+
+_________ BOOM: SYSTEM ONLINE _________
