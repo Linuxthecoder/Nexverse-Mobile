@@ -1,0 +1,4 @@
+{"email":"pub***","event":"FAILED_LOGIN","ip":"::ffff:192.168.29.140","level":"warn","message":"SECURITY_EVENT","service":"nexverse-api","timestamp":"2026-01-14 02:38:20","userAgent":"okhttp/4.12.0"}
+{"email":"pub***","event":"FAILED_LOGIN","ip":"::ffff:192.168.29.140","level":"warn","message":"SECURITY_EVENT","service":"nexverse-api","timestamp":"2026-01-14 03:25:33","userAgent":"okhttp/4.12.0"}
+{"email":"pub***","event":"FAILED_LOGIN","ip":"::ffff:192.168.29.140","level":"warn","message":"SECURITY_EVENT","service":"nexverse-api","timestamp":"2026-01-14 03:25:41","userAgent":"okhttp/4.12.0"}
+{"email":"pub***","event":"FAILED_LOGIN","ip":"::ffff:192.168.29.140","level":"warn","message":"SECURITY_EVENT","service":"nexverse-api","timestamp":"2026-01-14 03:25:51","userAgent":"okhttp/4.12.0"}

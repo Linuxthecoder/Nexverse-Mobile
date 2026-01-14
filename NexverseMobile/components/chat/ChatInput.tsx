@@ -34,11 +34,13 @@ type OutgoingMessage = {
 interface ChatInputProps {
     onSend: (payload: OutgoingMessage) => Promise<void> | void;
     isLoading?: boolean;
+    initialImageUri?: string | null;
 }
 
 export default function ChatInput({
     onSend,
     isLoading = false,
+    initialImageUri,
 }: ChatInputProps) {
     const { theme } = useThemeStore();
     const colors = Colors[theme];
@@ -66,6 +68,27 @@ export default function ChatInput({
         setShowActions(false);
         setUploadError(null);
     };
+
+    // Handle initial image from navigation params
+    React.useEffect(() => {
+        const loadInitialImage = async () => {
+            if (initialImageUri) {
+                try {
+                    const base64 = await FileSystem.readAsStringAsync(initialImageUri, {
+                        encoding: 'base64',
+                    });
+                    setImagePreview({
+                        uri: initialImageUri,
+                        base64: `data:image/jpeg;base64,${base64}`, // Assuming jpeg for captured images, but we could detect
+                    });
+                } catch (error) {
+                    console.error('Failed to load initial image:', error);
+                    setUploadError('Failed to load captured image');
+                }
+            }
+        };
+        loadInitialImage();
+    }, [initialImageUri]);
 
     const handleSend = async () => {
         if (!hasPayload || isSending || isLoading || isUploading) return;

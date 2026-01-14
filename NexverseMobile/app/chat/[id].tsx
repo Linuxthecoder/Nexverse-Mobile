@@ -169,6 +169,7 @@ export default function ChatScreen() {
                 >
                     <ChatInput
                         onSend={handleSend}
+                        initialImageUri={useLocalSearchParams().initialImage as string}
                     />
                 </KeyboardAvoidingView>
             </View>

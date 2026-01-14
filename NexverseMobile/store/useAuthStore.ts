@@ -43,16 +43,34 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
     checkAuth: async () => {
         try {
+            // 1. Try to load from local storage first (Offline support)
+            const storedUser = await AsyncStorage.getItem('authUser');
+            if (storedUser) {
+                set({ authUser: JSON.parse(storedUser) });
+            }
+
+            // 2. Verify with backend
             const res = await axiosInstance.get('/auth/check');
             set({ authUser: res.data });
             await AsyncStorage.setItem('authUser', JSON.stringify(res.data));
             get().connectSocket();
         } catch (error: any) {
-            if (error.response?.status !== 401) {
-                console.error('Error in checkAuth:', error);
+            console.error('Error in checkAuth:', error);
+
+            // Only logout if explicit 401 or no stored user
+            if (error.response?.status === 401) {
+                set({ authUser: null });
+                await AsyncStorage.removeItem('authUser');
+            } else {
+                // If it's a network error (offline), we keep the stored user if it exists
+                const storedUser = await AsyncStorage.getItem('authUser');
+                if (storedUser) {
+                    // Ensure socket connection logic is skipped or handled on reconnection
+                } else {
+                    // No stored user and API failed -> assume logged out
+                    set({ authUser: null });
+                }
             }
-            set({ authUser: null });
-            await AsyncStorage.removeItem('authUser');
         } finally {
             set({ isCheckingAuth: false });
         }

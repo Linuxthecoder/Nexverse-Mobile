@@ -45,11 +45,15 @@ const ChatHeader = React.memo<{
   theme: string;
   colors: any;
   onCameraPress: () => void;
-}>(({ colors, onCameraPress }) => (
+}>(({ theme, colors, onCameraPress }) => (
   <View style={[styles.headerContainer, { backgroundColor: colors.background }]}>
     <View style={styles.topBar}>
       <Image
-        source={require('../../assets/images/header.png')}
+        source={
+          theme === 'dark'
+            ? require('../../assets/images/nexverse-white.png')
+            : require('../../assets/images/nexverse-black.png')
+        }
         style={styles.headerImage}
         resizeMode="contain"
       />
@@ -395,15 +399,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between', // Changed to space-between
     alignItems: 'center',
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.sm, // Reduced from Spacing.lg to move items closer to edges
     paddingVertical: Spacing.xs,
   },
   headerImage: {
-    height: 34,
-    width: 140, // Approximate width, resizeMode="contain" will handle aspect ratio
+    height: 30,
+    width: 130,
+    marginLeft: 15, // Shifted to the right
   },
   cameraButton: {
     padding: 8,
+    marginRight: 8, // Add some margin to compensate for reduced container padding
   },
   searchContainer: {
     paddingHorizontal: Spacing.lg,
