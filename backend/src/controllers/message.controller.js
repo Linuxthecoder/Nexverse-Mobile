@@ -54,7 +54,7 @@ export const sendMessage = async (req, res, next) => {
     let documentData;
     if (document) {
       // Upload document as raw resource to Cloudinary
-      const uploadResponse = await cloudinary.uploader.upload(document.data, { 
+      const uploadResponse = await cloudinary.uploader.upload(document.data, {
         resource_type: "raw",
         public_id: `documents/${Date.now()}_${document.name}`,
         format: document.type.split('/')[1] || 'bin'
@@ -96,7 +96,7 @@ export const sendMessage = async (req, res, next) => {
       // User is offline - create persistent notification
       let messageType = 'text';
       let messageContent = text;
-      
+
       if (image) {
         messageType = 'image';
         messageContent = 'Image message';
@@ -110,7 +110,7 @@ export const sendMessage = async (req, res, next) => {
         messageType = 'document';
         messageContent = `Document: ${document.name}`;
       }
-      
+
       await createOfflineMessageNotification(senderId, receiverId, messageType, messageContent);
     }
 
@@ -173,7 +173,7 @@ export const markMessagesAsRead = async (req, res, next) => {
       { senderId: userToChatId, receiverId: myId, read: false },
       { $set: { read: true, updatedAt: new Date() } }
     );
-    
+
     // Get the messages that were just marked as read
     const readMessages = await Message.find({
       senderId: userToChatId,
@@ -181,19 +181,19 @@ export const markMessagesAsRead = async (req, res, next) => {
       read: true,
       updatedAt: { $gte: new Date(Date.now() - 5000) } // Only recently updated messages
     }).select('_id updatedAt');
-    
+
     const messageIds = readMessages.map(msg => msg._id);
-    
+
     // Notify sender that their messages were seen via socket
     const senderSocketId = getReceiverSocketId(userToChatId);
     if (senderSocketId && messageIds.length > 0) {
-      io.to(senderSocketId).emit("messagesSeen", { 
+      io.to(senderSocketId).emit("messagesSeen", {
         receiverId: myId,
         messageIds,
         timestamp: new Date()
       });
     }
-    
+
     res.status(200).json({ message: "Messages marked as read." });
   } catch (error) {
     next(error);

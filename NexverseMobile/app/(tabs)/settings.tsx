@@ -1,650 +1,305 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useMemo } from "react";
 import {
   View,
   Text,
-  StyleSheet,
-  TouchableOpacity,
-  Switch,
   ScrollView,
+  Pressable,
+  StyleSheet,
+  Dimensions,
+  Switch,
   Alert,
-  Image,
-  Platform,
-} from 'react-native';
-import ScreenWrapper from '../../components/ScreenWrapper';
-import { Colors } from '../../constants/theme';
-import { useThemeStore } from '@/store/useThemeStore';
-import { useAuthStore } from '@/store/useAuthStore';
-import LucideIcon from '@/components/LucideIcon';
+} from "react-native";
+import { Image } from "expo-image";
+import LucideIcon from "@/components/LucideIcon";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useThemeStore } from "@/store/useThemeStore";
+import { Colors, Spacing, Typography, BorderRadius } from "@/constants/theme";
+import ScreenWrapper from "@/components/ScreenWrapper";
 
-// Constants
-const GOLD = '#D4AF37';
+const { width } = Dimensions.get("window");
 
-// Section configuration for easy maintenance
-const SECTIONS = [
-  { id: 'main', title: 'Settings', icon: 'settings' },
-  { id: 'appearance', title: 'Appearance', icon: 'palette' },
-  { id: 'privacy', title: 'Privacy & Security', icon: 'shield' },
-  { id: 'account', title: 'Account', icon: 'user' },
-] as const;
-
-type SectionId = typeof SECTIONS[number]['id'];
-
-// Setting item component
-const SettingItem = React.memo<{
-  icon: string;
-  iconColor: string;
-  label: string;
-  onPress?: () => void;
-  rightElement?: React.ReactNode;
-  borderColor: string;
-  textColor: string;
-  isLast?: boolean;
-  isDanger?: boolean;
-}>(({ icon, iconColor, label, onPress, rightElement, borderColor, textColor, isLast, isDanger }) => (
-  <TouchableOpacity
-    style={[
-      styles.settingItem,
-      !isLast && { borderBottomWidth: 1, borderBottomColor: borderColor },
-    ]}
-    onPress={onPress}
-    disabled={!onPress}
-    activeOpacity={onPress ? 0.7 : 1}
-  >
-    <View style={styles.settingItemLeft}>
-      <LucideIcon
-        name={icon}
-        color={isDanger ? '#ff3b30' : iconColor}
-        size={20}
-        style={styles.settingIcon}
-      />
-      <Text style={[styles.settingText, { color: isDanger ? '#ff3b30' : textColor }]}>
-        {label}
-      </Text>
-    </View>
-    {rightElement}
-  </TouchableOpacity>
-));
-
-// Section header component
-const SectionHeader = React.memo<{
-  title: string;
-  subtitle?: string;
-  icon: string;
-  iconColor: string;
-  textColor: string;
-}>(({ title, subtitle, icon, iconColor, textColor }) => (
-  <View style={styles.sectionHeaderContainer}>
-    <View style={styles.sectionHeaderTop}>
-      <LucideIcon name={icon} color={iconColor} size={20} />
-      <Text style={[styles.sectionHeaderTitle, { color: textColor }]}>{title}</Text>
-    </View>
-    {subtitle && (
-      <Text style={[styles.sectionHeaderSubtitle, { color: textColor }]}>{subtitle}</Text>
-    )}
-  </View>
-));
-
-export default function SettingsScreen() {
-  const { theme, setTheme } = useThemeStore();
+const ProfileTab = () => {
   const { logout, authUser } = useAuthStore();
-  const [activeSection, setActiveSection] = useState<SectionId>('main');
+  const { theme, setTheme } = useThemeStore();
+  const colors = Colors[theme];
+  const isDark = theme === "dark";
 
-  // Memoize theme colors
-  const colors = useMemo(() => ({
-    background: theme === 'dark' ? Colors.dark.background : Colors.light.background,
-    text: theme === 'dark' ? Colors.dark.text : Colors.light.text,
-    subtext: theme === 'dark' ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
-    tint: theme === 'dark' ? GOLD : GOLD,
-    border: theme === 'dark' ? '#2a323c' : '#e0e0e0',
-    cardBg: theme === 'dark' ? '#1a1a1a' : '#f5f5f5',
-    arrow: theme === 'dark' ? '#666' : '#ccc',
-    successBg: theme === 'dark' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-    successBorder: theme === 'dark' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(16, 185, 129, 0.2)',
-    warningBg: theme === 'dark' ? 'rgba(251, 191, 36, 0.1)' : 'rgba(251, 191, 36, 0.1)',
-    warningBorder: theme === 'dark' ? 'rgba(251, 191, 36, 0.2)' : 'rgba(251, 191, 36, 0.2)',
-    errorBg: theme === 'dark' ? 'rgba(255, 59, 48, 0.1)' : 'rgba(255, 59, 48, 0.1)',
-    errorBorder: theme === 'dark' ? 'rgba(255, 59, 48, 0.2)' : 'rgba(255, 59, 48, 0.2)',
-  }), [theme]);
+  const dynamicStyles = useMemo(() => {
+    return {
+      surfaceDark: isDark ? "#0D1117" : "#F9F9F9",
+      surfaceCard: isDark ? "#161B22" : "#FFFFFF",
+      surfaceLight: isDark ? "#21262D" : "#F0F0F0",
+      foreground: isDark ? "#FFFFFF" : "#000000",
+      mutedForeground: isDark ? "#8B949E" : "#666666",
+      subtleForeground: isDark ? "#484F58" : "#999999",
+      border: isDark ? "#30363D" : "#E1E4E8",
+    };
+  }, [isDark]);
 
-  const isDarkMode = theme === 'dark';
-
-  // Callbacks
-  const toggleTheme = useCallback(() => {
-    setTheme(isDarkMode ? 'light' : 'dark');
-  }, [isDarkMode, setTheme]);
-
-  const handleLogout = useCallback(() => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout? You\'ll need your password to sign in again.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: () => logout(),
-        },
-      ]
-    );
-  }, [logout]);
-
-  const navigateToSection = useCallback((section: SectionId) => {
-    setActiveSection(section);
-  }, []);
-
-  const goBack = useCallback(() => {
-    setActiveSection('main');
-  }, []);
-
-  // Render main settings menu
-  const renderMainMenu = () => (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.header, { color: colors.text }]}>Settings</Text>
-
-      {/* Quick Settings Card */}
-      <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
-        <SectionHeader
-          title="Quick Settings"
-          icon="zap"
-          iconColor={colors.tint}
-          textColor={colors.text}
-        />
-        <SettingItem
-          icon="moon"
-          iconColor={colors.tint}
-          label="Dark Mode"
-          textColor={colors.text}
-          borderColor={colors.border}
-          rightElement={
-            <Switch
-              value={isDarkMode}
-              onValueChange={toggleTheme}
-              trackColor={{ false: '#767577', true: colors.tint }}
-              thumbColor={isDarkMode ? '#f4f3f4' : '#f4f3f4'}
-            />
-          }
-        />
-        <SettingItem
-          icon="bell"
-          iconColor={colors.tint}
-          label="Notifications"
-          textColor={colors.text}
-          borderColor={colors.border}
-          onPress={() => { }}
-          rightElement={<Text style={[styles.settingArrow, { color: colors.arrow }]}>›</Text>}
-          isLast
-        />
-      </View>
-
-      {/* Main Sections */}
-      <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
-        <SectionHeader
-          title="Customize"
-          icon="settings"
-          iconColor={colors.tint}
-          textColor={colors.text}
-        />
-        <SettingItem
-          icon="palette"
-          iconColor={colors.tint}
-          label="Appearance"
-          textColor={colors.text}
-          borderColor={colors.border}
-          onPress={() => navigateToSection('appearance')}
-          rightElement={<Text style={[styles.settingArrow, { color: colors.arrow }]}>›</Text>}
-        />
-        <SettingItem
-          icon="shield"
-          iconColor={colors.tint}
-          label="Privacy & Security"
-          textColor={colors.text}
-          borderColor={colors.border}
-          onPress={() => navigateToSection('privacy')}
-          rightElement={<Text style={[styles.settingArrow, { color: colors.arrow }]}>›</Text>}
-        />
-        <SettingItem
-          icon="user"
-          iconColor={colors.tint}
-          label="Account"
-          textColor={colors.text}
-          borderColor={colors.border}
-          onPress={() => navigateToSection('account')}
-          rightElement={<Text style={[styles.settingArrow, { color: colors.arrow }]}>›</Text>}
-          isLast
-        />
-      </View>
-
-      {/* Help & Support */}
-      <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
-        <SectionHeader
-          title="Help & Support"
-          icon="help-circle"
-          iconColor={colors.tint}
-          textColor={colors.text}
-        />
-        <SettingItem
-          icon="help-circle"
-          iconColor={colors.tint}
-          label="Help Center"
-          textColor={colors.text}
-          borderColor={colors.border}
-          onPress={() => { }}
-          rightElement={<Text style={[styles.settingArrow, { color: colors.arrow }]}>›</Text>}
-        />
-        <SettingItem
-          icon="mail"
-          iconColor={colors.tint}
-          label="Contact Us"
-          textColor={colors.text}
-          borderColor={colors.border}
-          onPress={() => { }}
-          rightElement={<Text style={[styles.settingArrow, { color: colors.arrow }]}>›</Text>}
-          isLast
-        />
-      </View>
-
-      {/* Logout */}
-      <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
-        <SettingItem
-          icon="log-out"
-          iconColor="#ff3b30"
-          label="Logout"
-          textColor={colors.text}
-          borderColor={colors.border}
-          onPress={handleLogout}
-          isDanger
-          isLast
-        />
-      </View>
-    </ScrollView>
-  );
-
-  // Render appearance section
-  const renderAppearanceSection = () => (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-      <TouchableOpacity style={styles.backButton} onPress={goBack}>
-        <LucideIcon name="chevron-left" color={colors.tint} size={24} />
-        <Text style={[styles.backButtonText, { color: colors.tint }]}>Back</Text>
-      </TouchableOpacity>
-
-      <Text style={[styles.header, { color: colors.text }]}>Appearance</Text>
-
-      <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
-        <SectionHeader
-          title="Theme Selection"
-          subtitle="Choose your preferred theme"
-          icon="palette"
-          iconColor={colors.tint}
-          textColor={colors.text}
-        />
-        <SettingItem
-          icon={isDarkMode ? 'moon' : 'sun'}
-          iconColor={colors.tint}
-          label={isDarkMode ? 'Dark Mode' : 'Light Mode'}
-          textColor={colors.text}
-          borderColor={colors.border}
-          rightElement={
-            <Switch
-              value={isDarkMode}
-              onValueChange={toggleTheme}
-              trackColor={{ false: '#767577', true: colors.tint }}
-              thumbColor={isDarkMode ? '#f4f3f4' : '#f4f3f4'}
-            />
-          }
-          isLast
-        />
-      </View>
-    </ScrollView>
-  );
-
-  // Render privacy section
-  const renderPrivacySection = () => (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-      <TouchableOpacity style={styles.backButton} onPress={goBack}>
-        <LucideIcon name="chevron-left" color={colors.tint} size={24} />
-        <Text style={[styles.backButtonText, { color: colors.tint }]}>Back</Text>
-      </TouchableOpacity>
-
-      <Text style={[styles.header, { color: colors.text }]}>Privacy & Security</Text>
-
-      <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
-        <SectionHeader
-          title="Privacy Settings"
-          subtitle="Control your privacy and visibility"
-          icon="shield"
-          iconColor={colors.tint}
-          textColor={colors.text}
-        />
-        <SettingItem
-          icon="eye"
-          iconColor={colors.tint}
-          label="Show Online Status"
-          textColor={colors.text}
-          borderColor={colors.border}
-          rightElement={
-            <Switch
-              value={true}
-              onValueChange={() => { }}
-              trackColor={{ false: '#767577', true: colors.tint }}
-            />
-          }
-        />
-        <SettingItem
-          icon="clock"
-          iconColor={colors.tint}
-          label="Show Last Seen"
-          textColor={colors.text}
-          borderColor={colors.border}
-          rightElement={
-            <Switch
-              value={true}
-              onValueChange={() => { }}
-              trackColor={{ false: '#767577', true: colors.tint }}
-            />
-          }
-        />
-        <SettingItem
-          icon="message-square"
-          iconColor={colors.tint}
-          label="Typing Indicator"
-          textColor={colors.text}
-          borderColor={colors.border}
-          rightElement={
-            <Switch
-              value={true}
-              onValueChange={() => { }}
-              trackColor={{ false: '#767577', true: colors.tint }}
-            />
-          }
-          isLast
-        />
-      </View>
-
-      <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
-        <SectionHeader
-          title="Security Information"
-          subtitle="Your account security details"
-          icon="lock"
-          iconColor={colors.tint}
-          textColor={colors.text}
-        />
-        <View style={[styles.securityBadge, { backgroundColor: colors.warningBg, borderColor: colors.warningBorder }]}>
-          <LucideIcon name="check-circle" color={colors.tint} size={20} />
-          <View style={styles.securityBadgeText}>
-            <Text style={[styles.securityBadgeTitle, { color: colors.tint }]}>Account Verified</Text>
-            <Text style={[styles.securityBadgeSubtitle, { color: colors.subtext }]}>
-              Your email address is verified
-            </Text>
-          </View>
-        </View>
-        <View style={[styles.securityBadge, { backgroundColor: colors.warningBg, borderColor: colors.warningBorder }]}>
-          <LucideIcon name="shield" color={colors.tint} size={20} />
-          <View style={styles.securityBadgeText}>
-            <Text style={[styles.securityBadgeTitle, { color: colors.tint }]}>Encrypted Connection</Text>
-            <Text style={[styles.securityBadgeSubtitle, { color: colors.subtext }]}>
-              All messages are end-to-end encrypted
-            </Text>
-          </View>
-        </View>
-      </View>
-    </ScrollView>
-  );
-
-  // Render account section
-  const renderAccountSection = () => (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-      <TouchableOpacity style={styles.backButton} onPress={goBack}>
-        <LucideIcon name="chevron-left" color={colors.tint} size={24} />
-        <Text style={[styles.backButtonText, { color: colors.tint }]}>Back</Text>
-      </TouchableOpacity>
-
-      <Text style={[styles.header, { color: colors.text }]}>Account</Text>
-
-      <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
-        <SectionHeader
-          title="Account Information"
-          subtitle="Your profile and account details"
-          icon="user"
-          iconColor={colors.tint}
-          textColor={colors.text}
-        />
-        <View style={styles.profileSection}>
-          <Image
-            source={{ uri: authUser?.profilePic || 'https://via.placeholder.com/80' }}
-            style={[styles.profileImage, { borderColor: colors.tint }]}
-          />
-          <View style={styles.profileInfo}>
-            <Text style={[styles.profileName, { color: colors.text }]}>
-              {authUser?.fullName || 'User Name'}
-            </Text>
-            <Text style={[styles.profileEmail, { color: colors.subtext }]}>
-              {authUser?.email || 'user@example.com'}
-            </Text>
-            <View style={styles.onlineIndicator}>
-              <View style={styles.onlineDot} />
-              <Text style={[styles.onlineText, { color: GOLD }]}>Online</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
-        <SettingItem
-          icon="edit"
-          iconColor={colors.tint}
-          label="Edit Profile"
-          textColor={colors.text}
-          borderColor={colors.border}
-          onPress={() => { }}
-          rightElement={<Text style={[styles.settingArrow, { color: colors.arrow }]}>›</Text>}
-        />
-        <SettingItem
-          icon="key"
-          iconColor={colors.tint}
-          label="Change Password"
-          textColor={colors.text}
-          borderColor={colors.border}
-          onPress={() => { }}
-          rightElement={<Text style={[styles.settingArrow, { color: colors.arrow }]}>›</Text>}
-          isLast
-        />
-      </View>
-
-      <View style={[styles.warningCard, { backgroundColor: colors.warningBg, borderColor: colors.warningBorder }]}>
-        <LucideIcon name="alert-triangle" color="#fbbf24" size={20} />
-        <Text style={[styles.warningText, { color: colors.text }]}>
-          Only log out if you remember your password. You'll need it to sign in again.
-        </Text>
-      </View>
-
-      <TouchableOpacity
-        style={[styles.logoutButton, { backgroundColor: colors.errorBg, borderColor: colors.errorBorder }]}
-        onPress={handleLogout}
-        activeOpacity={0.7}
-      >
-        <LucideIcon name="log-out" color="#ff3b30" size={20} />
-        <Text style={styles.logoutButtonText}>Logout from Account</Text>
-      </TouchableOpacity>
-    </ScrollView>
-  );
-
-  // Render appropriate section based on activeSection
-  const renderContent = () => {
-    switch (activeSection) {
-      case 'appearance':
-        return renderAppearanceSection();
-      case 'privacy':
-        return renderPrivacySection();
-      case 'account':
-        return renderAccountSection();
-      default:
-        return renderMainMenu();
-    }
+  const handleLogout = () => {
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Log Out", style: "destructive", onPress: () => logout() },
+    ]);
   };
 
-  return <ScreenWrapper bg={colors.background}>{renderContent()}</ScreenWrapper>;
-}
+  const toggleTheme = () => {
+    setTheme(isDark ? "light" : "dark");
+  };
+
+  const MENU_SECTIONS = [
+    {
+      title: "Account",
+      items: [
+        { icon: "user", label: "Edit Profile", color: "#F4A261", onPress: () => { } },
+        { icon: "shield-check", label: "Privacy & Security", color: "#10B981", onPress: () => { } },
+        { icon: "bell", label: "Notifications", value: "On", color: "#8B5CF6", onPress: () => { } },
+      ],
+    },
+    {
+      title: "Preferences",
+      items: [
+        {
+          icon: "moon",
+          label: "Dark Mode",
+          color: "#6366F1",
+          rightElement: (
+            <Switch
+              value={isDark}
+              onValueChange={toggleTheme}
+              trackColor={{ false: "#767577", true: colors.tint }}
+              thumbColor="#f4f3f4"
+            />
+          )
+        },
+        { icon: "globe", label: "Language", value: "English", color: "#EC4899", onPress: () => { } },
+        { icon: "cloud", label: "Data & Storage", value: "1.2 GB", color: "#14B8A6", onPress: () => { } },
+      ],
+    },
+    {
+      title: "Support",
+      items: [
+        { icon: "help-circle", label: "Help Center", color: "#F59E0B", onPress: () => { } },
+        { icon: "message-circle", label: "Contact Us", color: "#3B82F6", onPress: () => { } },
+        { icon: "star", label: "Rate the App", color: "#F4A261", onPress: () => { } },
+      ],
+    },
+  ];
+
+  return (
+    <ScreenWrapper bg={dynamicStyles.surfaceDark}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentInsetAdjustmentBehavior="automatic"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        {/* HEADER */}
+        <View style={styles.header}>
+          <View style={styles.avatarContainer}>
+            <View style={[styles.avatarBorder, { borderColor: colors.tint }]}>
+              <Image
+                source={authUser?.profilePic || "https://res.cloudinary.com/djp788df0/image/upload/v1736263009/profile_pics/default_avatar.png"}
+                style={styles.avatarImage}
+                contentFit="cover"
+              />
+            </View>
+
+            <Pressable style={[styles.cameraButton, { backgroundColor: colors.tint, borderColor: dynamicStyles.surfaceDark }]}>
+              <LucideIcon name="camera" size={16} color="#FFFFFF" />
+            </Pressable>
+          </View>
+
+          {/* NAME & EMAIL */}
+          <Text style={[styles.nameText, { color: dynamicStyles.foreground }]}>
+            {authUser?.fullName || "Nexverse User"}
+          </Text>
+
+          <Text style={[styles.emailText, { color: dynamicStyles.mutedForeground }]}>
+            {authUser?.email || "user@nexverse.com"}
+          </Text>
+
+          <View style={styles.onlineBadge}>
+            <View style={styles.onlineDot} />
+            <Text style={styles.onlineLabel}>Online</Text>
+          </View>
+        </View>
+
+        {/* MENU SECTIONS */}
+        {MENU_SECTIONS.map((section) => (
+          <View key={section.title} style={styles.sectionContainer}>
+            <Text style={[styles.sectionTitle, { color: dynamicStyles.mutedForeground }]}>
+              {section.title}
+            </Text>
+            <View style={[styles.card, { backgroundColor: dynamicStyles.surfaceCard, borderRadius: BorderRadius.lg }]}>
+              {section.items.map((item, index) => (
+                <Pressable
+                  key={item.label}
+                  onPress={item.onPress}
+                  style={({ pressed }) => [
+                    styles.menuItem,
+                    pressed && item.onPress && { backgroundColor: dynamicStyles.surfaceLight },
+                    index < section.items.length - 1 && { borderBottomWidth: 1, borderBottomColor: dynamicStyles.border }
+                  ]}
+                >
+                  <View
+                    style={[styles.iconWrapper, { backgroundColor: `${item.color}20` }]}
+                  >
+                    <LucideIcon name={item.icon} size={20} color={item.color} />
+                  </View>
+                  <Text style={[styles.menuItemLabel, { color: dynamicStyles.foreground }]}>{item.label}</Text>
+
+                  {item.rightElement ? (
+                    item.rightElement
+                  ) : (
+                    <>
+                      {item.value && (
+                        <Text style={[styles.menuItemValue, { color: dynamicStyles.mutedForeground }]}>{item.value}</Text>
+                      )}
+                      <LucideIcon name="chevron-right" size={18} color="#6B6B70" />
+                    </>
+                  )}
+                </Pressable>
+              ))}
+            </View>
+          </View>
+        ))}
+
+        {/* Logout Button */}
+        <Pressable
+          style={({ pressed }) => [
+            styles.logoutButton,
+            { backgroundColor: isDark ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.05)', borderColor: isDark ? 'rgba(239, 68, 68, 0.2)' : 'rgba(239, 68, 68, 0.1)' },
+            pressed && { opacity: 0.7 }
+          ]}
+          onPress={handleLogout}
+        >
+          <View style={styles.logoutContent}>
+            <LucideIcon name="log-out" size={20} color="#EF4444" />
+            <Text style={styles.logoutButtonText}>Log Out</Text>
+          </View>
+        </Pressable>
+      </ScrollView>
+    </ScreenWrapper>
+  );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
   header: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 24,
+    alignItems: "center",
+    marginTop: 40,
+    marginBottom: 20,
   },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-    gap: 8,
+  avatarContainer: {
+    position: "relative",
   },
-  backButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
+  avatarBorder: {
+    borderRadius: 999,
+    borderWidth: 2,
+    padding: 3,
   },
-  card: {
+  avatarImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  cameraButton: {
+    position: "absolute",
+    bottom: 2,
+    right: 2,
+    width: 32,
+    height: 32,
     borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
   },
-  sectionHeaderContainer: {
-    marginBottom: 16,
+  nameText: {
+    fontSize: Typography.sizes.xxl,
+    fontWeight: "bold",
+    marginTop: 16,
   },
-  sectionHeaderTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginBottom: 4,
+  emailText: {
+    fontSize: Typography.sizes.base,
+    marginTop: 4,
   },
-  sectionHeaderTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  sectionHeaderSubtitle: {
-    fontSize: 14,
-    opacity: 0.7,
-    marginLeft: 30,
-  },
-  settingItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 15,
-  },
-  settingItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  settingIcon: {
-    marginRight: 15,
-  },
-  settingText: {
-    fontSize: 16,
-  },
-  settingArrow: {
-    fontSize: 20,
-  },
-  infoCard: {
-    flexDirection: 'row',
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    gap: 12,
-    marginBottom: 16,
-  },
-  infoText: {
-    flex: 1,
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  securityBadge: {
-    flexDirection: 'row',
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    gap: 12,
-    marginBottom: 12,
-  },
-  securityBadgeText: {
-    flex: 1,
-  },
-  securityBadgeTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  securityBadgeSubtitle: {
-    fontSize: 13,
-  },
-  profileSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-    paddingVertical: 8,
-  },
-  profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    borderWidth: 3,
-  },
-  profileInfo: {
-    flex: 1,
-  },
-  profileName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  profileEmail: {
-    fontSize: 14,
-    marginBottom: 8,
-  },
-  onlineIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
+  onlineBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 12,
+    backgroundColor: "rgba(34, 197, 94, 0.2)",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
   onlineDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: GOLD,
+    backgroundColor: "#22C55E",
+    marginRight: 8,
   },
-  onlineText: {
-    fontSize: 12,
-    fontWeight: '600',
+  onlineLabel: {
+    color: "#22C55E",
+    fontSize: Typography.sizes.sm,
+    fontWeight: "600",
   },
-  warningCard: {
-    flexDirection: 'row',
-    padding: 16,
+  sectionContainer: {
+    marginTop: 24,
+    marginHorizontal: 20,
+  },
+  sectionTitle: {
+    fontSize: Typography.sizes.xs,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    marginBottom: 8,
+    marginLeft: 4,
+  },
+  card: {
+    overflow: "hidden",
+  },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  iconWrapper: {
+    width: 36,
+    height: 36,
     borderRadius: 12,
-    borderWidth: 1,
-    gap: 12,
-    marginBottom: 16,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  warningText: {
+  menuItemLabel: {
     flex: 1,
-    fontSize: 14,
-    lineHeight: 20,
+    marginLeft: 12,
+    fontSize: Typography.sizes.base,
+    fontWeight: "500",
+  },
+  menuItemValue: {
+    fontSize: Typography.sizes.sm,
+    marginRight: 4,
   },
   logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    padding: 16,
-    borderRadius: 12,
+    marginHorizontal: 20,
+    marginTop: 32,
+    borderRadius: BorderRadius.lg,
+    paddingVertical: 16,
+    alignItems: "center",
     borderWidth: 1,
-    marginBottom: 32,
+  },
+  logoutContent: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   logoutButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#ff3b30',
+    marginLeft: 8,
+    color: "#EF4444",
+    fontWeight: "600",
+    fontSize: Typography.sizes.base,
   },
 });
+
+export default ProfileTab;

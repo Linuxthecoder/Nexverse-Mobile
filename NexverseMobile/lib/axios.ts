@@ -5,8 +5,8 @@ import { Alert, Platform } from 'react-native';
 // Use environment variables for API URL configuration
 export const API_URL = process.env.EXPO_PUBLIC_API_URL ||
     (Platform.OS === 'android'
-        ? 'http://10.0.2.2:5001'  // Android Emulator fallback
-        : 'http://localhost:5001'); // iOS/Web fallback
+        ? 'http://10.0.2.2:5002'  // Android Emulator fallback
+        : 'http://localhost:5002'); // iOS/Web fallback
 
 console.log('🌐 API URL configured:', API_URL);
 

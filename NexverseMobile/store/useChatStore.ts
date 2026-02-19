@@ -2,35 +2,7 @@ import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios';
 import { useAuthStore } from './useAuthStore';
 import { Alert } from 'react-native';
-
-interface Message {
-    _id: string;
-    senderId: string;
-    receiverId: string;
-    text?: string;
-    image?: string;
-    video?: string;
-    audio?: string;
-    document?: any;
-    status?: 'sending' | 'sent' | 'delivered' | 'seen' | 'error';
-    read?: boolean;
-    createdAt: string;
-    updatedAt?: string;
-}
-
-interface User {
-    _id: string;
-    fullName: string;
-    email: string;
-    profilePic?: string;
-    lastSeen?: string;
-    isOnline?: boolean;
-    // New fields for frontend list
-    lastMessage?: string;
-    lastMessageTime?: string;
-    lastMessageType?: string;
-    isLastMessageMyOwn?: boolean;
-}
+import { Message, User } from '@/types';
 
 interface ChatStore {
     messages: Message[];

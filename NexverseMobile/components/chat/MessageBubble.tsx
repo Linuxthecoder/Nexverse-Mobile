@@ -1,129 +1,54 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, Platform } from 'react-native';
-import { Colors } from '@/constants/theme';
-import { useThemeStore } from '@/store/useThemeStore';
-import LucideIcon from '@/components/LucideIcon';
-import { getImageUrl } from '@/lib/utils';
-import Svg, { Path } from 'react-native-svg';
+import { Message } from "@/types";
+import { View, Text, StyleSheet, Image } from "react-native";
+import { Spacing, BorderRadius } from "@/constants/theme";
+import { useThemeStore } from "@/store/useThemeStore";
+import { Colors } from "@/constants/theme";
+import { formatMessageTime, formatMessageStatus } from "@/lib/utils";
 
 interface MessageBubbleProps {
-    message: string;
-    timestamp: string;
+    message: Message;
     isMe: boolean;
-    status?: 'sending' | 'sent' | 'delivered' | 'seen' | 'error';
-    image?: string;
 }
 
-export default function MessageBubble({
-    message,
-    timestamp,
-    isMe,
-    status,
-    image,
-}: MessageBubbleProps) {
+function MessageBubble({ message, isMe }: MessageBubbleProps) {
     const { theme } = useThemeStore();
     const colors = Colors[theme];
-    const [imageError, setImageError] = React.useState(false);
+    const isSeen = message.status === 'seen';
 
-    // Determine bubble colors based on theme
-    const bubbleColor = isMe
-        ? (theme === 'dark' ? '#1C1C1E' : '#FFFFFF')
-        : (theme === 'dark' ? '#2C2C2E' : '#F0F0F0');
-
-    const textColor = isMe
-        ? (theme === 'dark' ? '#FFFFFF' : '#000000')
-        : (theme === 'dark' ? '#FFFFFF' : '#000000');
+    if (!message.image) return null;
 
     return (
-        <View
-            style={[
-                styles.container,
-                isMe ? styles.containerMe : styles.containerOther,
-            ]}
-        >
-            <View style={styles.bubbleWrapper}>
-                {/* Main bubble */}
-                <View
-                    style={[
-                        styles.bubble,
-                        {
-                            backgroundColor: bubbleColor,
-                            borderRadius: 12,
-                        },
-                        isMe ? styles.bubbleMe : styles.bubbleOther,
-                    ]}
-                >
-                    {image && getImageUrl(image) && !imageError ? (
-                        <Image
-                            source={{ uri: getImageUrl(image) }}
-                            style={styles.image}
-                            resizeMode="cover"
-                            onError={() => setImageError(true)}
-                        />
-                    ) : image && (imageError || !getImageUrl(image)) ? (
-                        <View style={[styles.image, styles.imageError]}>
-                            <LucideIcon name="image-off" size={24} color={colors.icon} />
-                            <Text style={{ fontSize: 10, color: colors.icon, marginTop: 4 }}>
-                                Failed to load
-                            </Text>
-                        </View>
-                    ) : null}
-
-                    <Text style={[styles.messageText, { color: textColor }]}>
-                        {message}
-                    </Text>
-
-                    <View style={styles.metadataContainer}>
-                        <Text style={[styles.timestamp, { color: colors.timestamp }]}>
-                            {timestamp}
+        <View style={[styles.container, isMe ? styles.meContainer : styles.otherContainer]}>
+            <View
+                style={[
+                    styles.bubble,
+                    isMe
+                        ? { backgroundColor: colors.outgoingMessage, borderBottomRightRadius: 2 }
+                        : { backgroundColor: colors.incomingMessage, borderBottomLeftRadius: 2 },
+                    { padding: 2, maxWidth: '75%' }
+                ]}
+            >
+                <View style={styles.imageWrapper}>
+                    <Image
+                        source={{ uri: message.image }}
+                        style={styles.image}
+                        resizeMode="cover"
+                    />
+                    <View style={styles.imageOverlayFooter}>
+                        <Text style={styles.imageTimestamp}>
+                            {formatMessageTime(message.createdAt)}
                         </Text>
-                        {isMe && (
-                            <View style={styles.readStatus}>
-                                {status === 'sending' && (
-                                    <LucideIcon name="clock" size={12} color={colors.timestamp} />
-                                )}
-                                {status === 'sent' && (
-                                    <LucideIcon name="check" size={14} color={colors.timestamp} />
-                                )}
-                                {status === 'delivered' && (
-                                    <LucideIcon name="check-check" size={14} color={colors.timestamp} />
-                                )}
-                                {status === 'seen' && (
-                                    <LucideIcon name="check-check" size={14} color={colors.checkmark} />
-                                )}
-                                {status === 'error' && (
-                                    <LucideIcon name="alert-circle" size={14} color="#FF4444" />
-                                )}
+                        {isMe && message.status && (
+                            <View style={styles.ticksContainer}>
+                                <Text style={[
+                                    styles.status,
+                                    { color: isSeen ? '#53BDEB' : '#FFF', fontSize: 13 }
+                                ]}>
+                                    {formatMessageStatus(message.status)}
+                                </Text>
                             </View>
                         )}
                     </View>
-                </View>
-
-                {/* Tail */}
-                <View
-                    style={[
-                        styles.tailContainer,
-                        isMe ? styles.tailContainerMe : styles.tailContainerOther,
-                    ]}
-                >
-                    <Svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        style={isMe ? styles.tailMe : styles.tailOther}
-                    >
-                        {isMe ? (
-                            <Path
-                                d="M 0 0 Q 0 10 10 20 L 0 20 Z"
-                                fill={bubbleColor}
-                            />
-                        ) : (
-                            <Path
-                                d="M 20 0 Q 20 10 10 20 L 20 20 Z"
-                                fill={bubbleColor}
-                            />
-                        )}
-                    </Svg>
                 </View>
             </View>
         </View>
@@ -132,91 +57,55 @@ export default function MessageBubble({
 
 const styles = StyleSheet.create({
     container: {
-        marginVertical: 8,
+        flexDirection: 'row',
+        marginBottom: Spacing.xs,
         width: '100%',
-        paddingHorizontal: 16,
     },
-    containerMe: {
-        alignItems: 'flex-end',
+    meContainer: {
+        justifyContent: 'flex-end' as const,
     },
-    containerOther: {
-        alignItems: 'flex-start',
-    },
-    bubbleWrapper: {
-        position: 'relative',
-        maxWidth: '80%',
+    otherContainer: {
+        justifyContent: 'flex-start' as const,
     },
     bubble: {
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        paddingBottom: 22,
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.1,
-                shadowRadius: 4,
-            },
-            android: {
-                elevation: 2,
-            },
-        }),
+        borderRadius: BorderRadius.lg - 2,
+        elevation: 1,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 1,
     },
-    bubbleMe: {
-        borderBottomRightRadius: 4,
+    imageWrapper: {
+        position: 'relative',
+        borderRadius: BorderRadius.md - 2,
+        overflow: 'hidden',
     },
-    bubbleOther: {
-        borderBottomLeftRadius: 4,
-    },
-    tailContainer: {
-        position: 'absolute',
-        bottom: 0,
-        width: 20,
-        height: 20,
-    },
-    tailContainerMe: {
-        right: -8,
-    },
-    tailContainerOther: {
-        left: -8,
-    },
-    tailMe: {
-        transform: [{ scaleX: -1 }],
-    },
-    tailOther: {},
     image: {
-        width: 200,
-        height: 150,
-        borderRadius: 12,
-        marginBottom: 8,
+        width: '100%',
+        aspectRatio: 0.75, // Reverted to Portrait (longer not wider)
+        borderRadius: BorderRadius.md - 2,
     },
-    imageError: {
-        backgroundColor: 'rgba(0,0,0,0.05)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 200,
-        height: 150,
-        alignSelf: 'center',
-        marginBottom: 6,
-    },
-    messageText: {
-        fontSize: 16,
-        lineHeight: 22,
-    },
-    metadataContainer: {
+    imageOverlayFooter: {
+        position: 'absolute',
+        bottom: 4,
+        right: 6,
         flexDirection: 'row',
         alignItems: 'center',
-        position: 'absolute',
-        bottom: 6,
-        right: 12,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        paddingHorizontal: 6,
+        paddingVertical: 1,
+        borderRadius: 10,
     },
-    timestamp: {
+    imageTimestamp: {
+        color: '#FFFFFF',
         fontSize: 10,
-        marginRight: 4,
-        opacity: 0.6,
     },
-    readStatus: {
-        marginLeft: 0,
+    ticksContainer: {
+        marginLeft: 2,
+    },
+    status: {
+        fontWeight: 'normal',
     },
 });
 
+export default MessageBubble;

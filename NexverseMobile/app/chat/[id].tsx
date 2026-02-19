@@ -6,6 +6,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Image,
+    ImageBackground, // Added
     ActivityIndicator,
     KeyboardAvoidingView,
     Platform,
@@ -19,8 +20,9 @@ import { Colors, Spacing, Typography, BorderRadius } from '../../constants/theme
 import { useThemeStore } from '@/store/useThemeStore';
 import LucideIcon from '@/components/LucideIcon';
 import MessageBubble from '@/components/chat/MessageBubble';
+import TextMessage from '@/components/chat/TextMessage';
 import ChatInput from '@/components/chat/ChatInput';
-import { formatMessageTime } from '@/lib/utils';
+import { Message } from '@/types';
 import ScreenWrapper from '@/components/ScreenWrapper';
 
 // Encryption Notice Component
@@ -91,15 +93,26 @@ export default function ChatScreen() {
         router.back();
     };
 
-    const renderMessage = ({ item }: { item: any }) => {
+    const renderMessage = ({ item, index }: { item: Message; index: number }) => {
         const isMe = item.senderId === authUser?._id;
+
+        if (item.image) {
+            return <MessageBubble message={item} isMe={isMe} />;
+        }
+
+        // Determine if this message is part of a consecutive group
+        const prevMessage = index > 0 ? messages[index - 1] : null;
+        const nextMessage = index < messages.length - 1 ? messages[index + 1] : null;
+
+        const isFirstInGroup = !prevMessage || prevMessage.senderId !== item.senderId;
+        const isLastInGroup = !nextMessage || nextMessage.senderId !== item.senderId;
+
         return (
-            <MessageBubble
-                message={item.text}
-                timestamp={formatMessageTime(item.createdAt)}
+            <TextMessage
+                message={item}
                 isMe={isMe}
-                image={item.image}
-                status={item.status}
+                isFirstInGroup={isFirstInGroup}
+                isLastInGroup={isLastInGroup}
             />
         );
     };
@@ -151,15 +164,25 @@ export default function ChatScreen() {
                         <ActivityIndicator size="large" color={colors.tint} />
                     </View>
                 ) : (
-                    <FlatList
-                        ref={flatListRef}
-                        data={messages}
-                        renderItem={renderMessage}
-                        keyExtractor={(item) => item._id}
-                        contentContainerStyle={styles.messagesList}
-                        ListHeaderComponent={<EncryptionNotice />}
-                        onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: false })}
-                    />
+                    <ImageBackground
+                        source={require('@/assets/images/chat_bg.png')}
+                        style={styles.chatBackground}
+                        imageStyle={{ opacity: 1 }}
+                        resizeMode="cover"
+                    >
+                        <FlatList
+                            ref={flatListRef}
+                            data={messages}
+                            renderItem={renderMessage}
+                            keyExtractor={(item) => item._id}
+                            contentContainerStyle={styles.messagesList}
+                            ListHeaderComponent={<EncryptionNotice />}
+                            onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: false })}
+                            showsVerticalScrollIndicator={false}
+                            keyboardShouldPersistTaps="handled"
+                            keyboardDismissMode="interactive"
+                        />
+                    </ImageBackground>
                 )}
 
                 <KeyboardAvoidingView
@@ -238,8 +261,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    chatBackground: {
+        flex: 1,
+    },
     messagesList: {
-        paddingHorizontal: Spacing.md,
+        paddingHorizontal: Spacing.xs,
         paddingVertical: Spacing.md,
     },
     encryptionContainer: {

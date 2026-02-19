@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { io, Socket } from 'socket.io-client';
 import { Alert } from 'react-native';
 
-const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL || 'http://10.0.2.2:5001';
+const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL || 'http://192.168.29.109:1200';
 
 interface AuthUser {
     _id: string;

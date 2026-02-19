@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Style Bubble</title>
+    <style>
+        /* 1. Environment Setup (Dark Mode Background) */
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #0b141a;
+            /* WhatsApp Dark Background */
+            background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+            /* Subtle doodle pattern */
+            background-blend-mode: overlay;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #e9edef;
+        }
+
+        /* 2. The Bubble Container */
+        .message-container {
+            display: flex;
+            justify-content: flex-end;
+            /* Aligns bubble to the right */
+            width: 100%;
+            max-width: 400px;
+            padding-right: 10px;
+            /* Space for the tail */
+        }
+
+        /* 3. The Bubble Itself */
+        .bubble {
+            position: relative;
+            background-color: #005c4b;
+            /* Distinctive Dark Green */
+            color: #e9edef;
+            padding: 6px 7px 8px 9px;
+            border-radius: 7.5px;
+            border-top-right-radius: 0;
+            /* Sharp corner for tail */
+            box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+            max-width: 80%;
+            font-size: 14.2px;
+            line-height: 19px;
+            display: flex;
+            flex-wrap: wrap;
+            /* Allows time to wrap if text is long */
+            align-items: flex-end;
+        }
+
+        /* The "Tail" Triangle */
+        .bubble::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: -8px;
+            /* Push out to the right */
+            width: 0;
+            height: 0;
+            border-top: 8px solid #005c4b;
+            /* Match bubble color */
+            border-right: 8px solid transparent;
+            /* Transparent creates the slope */
+            border-left: 8px solid transparent;
+            /* Clip the shape to look like the tail */
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+        }
+
+        /* 4. Text Content */
+        .message-text {
+            margin-right: 7px;
+            /* Space between text and time */
+            white-space: pre-wrap;
+            /* Preserve line breaks */
+            padding-bottom: 2px;
+        }
+
+        /* 5. Metadata (Time + Ticks) */
+        .metadata {
+            display: flex;
+            align-items: center;
+            font-size: 11px;
+            color: #8696a0;
+            /* Faded text for time */
+            height: 15px;
+            margin-left: auto;
+            /* Pushes time to the right if wrapped */
+            margin-bottom: -3px;
+            /* Align visually to bottom */
+        }
+
+        /* The Blue Double Ticks (SVG) */
+        .ticks svg {
+            width: 16px;
+            height: 11px;
+            /* Adjusted to fit nicely */
+            fill: #53bdeb;
+            /* "Read" Blue Color */
+            margin-left: 2px;
+        }
+
+        /* 6. Controls (For the Demo) */
+        .controls {
+            margin-top: 50px;
+            background: #202c33;
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        input {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background: #2a3942;
+            color: white;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="message-container">
+        <div class="bubble">
+            <span class="message-text" id="msgText">I have taken</span>
+            <div class="metadata">
+                <span id="msgTime">3:53 PM</span>
+                <span class="ticks">
+                    <svg viewBox="0 0 16 11" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M11.55 0L10.45 1.05L13.4 4L1.05 4.05L0 5.1L13.45 5.1L10.45 8.05L11.55 9.1L16 4.55L11.55 0Z"
+                            opacity="0" />
+                        <path d="M4.6 7.4L1.65 4.45L0.6 5.5L4.6 9.5L12.6 1.5L11.55 0.45L4.6 7.4Z" />
+                        <path d="M10.6 7.4L7.65 4.45L6.6 5.5L10.6 9.5L18.6 1.5L17.55 0.45L10.6 7.4Z"
+                            transform="translate(-5, 0)" />
+                    </svg>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <input type="text" id="inputMsg" placeholder="Type message..." value="I have taken">
+        <input type="text" id="inputTime" placeholder="Time" value="3:53 PM" style="width: 80px;">
+    </div>
+
+    <script>
+        // JavaScript to make the bubble interactive
+        const inputMsg = document.getElementById('inputMsg');
+        const inputTime = document.getElementById('inputTime');
+        const msgText = document.getElementById('msgText');
+        const msgTime = document.getElementById('msgTime');
+
+        // Update text live as you type
+        inputMsg.addEventListener('input', (e) => {
+            msgText.textContent = e.target.value;
+        });
+
+        // Update time live
+        inputTime.addEventListener('input', (e) => {
+            msgTime.textContent = e.target.value;
+        });
+    </script>
+
+</body>
+
+</html>

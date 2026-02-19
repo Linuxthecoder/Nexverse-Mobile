@@ -44,12 +44,12 @@ app.use(
     origin: function (origin, callback) {
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
-      
+
       // In development, allow all origins for easier testing
       if (process.env.NODE_ENV === 'development') {
         return callback(null, true);
       }
-      
+
       // Check if origin is allowed
       const allowedOrigins = [
         FRONTEND_URL,
@@ -62,7 +62,7 @@ app.use(
         'http://192.168.29.109:5001',      // Physical device API
         EXPO_DEV_URL,
       ];
-      
+
       if (allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
@@ -118,7 +118,7 @@ app.use("/api/notifications", notificationRoutes);
 
 if (process.env.NODE_ENV === "production") {
   console.log("🔒 Production mode: Enhanced security enabled");
-  
+
   // Serve static files from the frontend build
   app.use(express.static(path.join(__dirname, "../frontend/dist"), {
     setHeaders: (res, path) => {
@@ -155,8 +155,8 @@ app.use((err, req, res, next) => {
       message === "Invalid user ID. Please select a valid chat."
         ? "The selected chat could not be found. Please try another."
         : message.includes("validation") || message.includes("Validation")
-        ? "Some information you entered is invalid. Please check and try again."
-        : message;
+          ? "Some information you entered is invalid. Please check and try again."
+          : message;
   } else if (status === 401) {
     message = "You are not authorized. Please log in.";
   } else if (status === 403) {
@@ -182,10 +182,10 @@ app.use((err, req, res, next) => {
 
 // Start server with beautiful colored terminal output
 const startServer = async () => {
-  server.listen(PORT, async () => {
+  server.listen(PORT, '0.0.0.0', async () => {
     // Connect to database first
     await connectDB();
-    
+
     // Extract database host from MongoDB URI for display
     let databaseHost = '';
     try {
@@ -197,7 +197,7 @@ const startServer = async () => {
     } catch (err) {
       // Ignore parsing errors
     }
-    
+
     // Display beautiful startup banner
     displayStartupBanner({
       codename: APP_CODENAME,
@@ -210,11 +210,11 @@ const startServer = async () => {
       databaseHost: databaseHost,
       jwtLoaded: !!JWT_SECRET
     });
-    
+
     // Start keep-alive service after server is running
     startKeepAlive();
   });
-  
+
   server.on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
       console.error(`\x1b[31m\x1b[1m❌ Port ${PORT} is already in use!\x1b[0m`);

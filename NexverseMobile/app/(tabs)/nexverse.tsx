@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Animated, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Animated } from 'react-native';
 import ScreenWrapper from '../../components/ScreenWrapper';
 import { Colors } from '../../constants/theme';
 import { useThemeStore } from '@/store/useThemeStore';
@@ -198,15 +198,12 @@ export default function NexverseScreen() {
               <Text style={[styles.welcomeText, { color: colors.subtext }]}>
                 Welcome to
               </Text>
-              <Image
-                source={
-                  theme === 'dark'
-                    ? require('../../assets/images/nexverse-white.png')
-                    : require('../../assets/images/nexverse-black.png')
-                }
-                style={styles.headerImage}
-                resizeMode="contain"
-              />
+              <Text style={[styles.brandName, {
+                color: GOLD,
+                textShadowColor: 'rgba(212, 175, 55, 0.4)',
+                textShadowOffset: { width: 0, height: 2 },
+                textShadowRadius: 10
+              }]}>NexVerse</Text>
               <Text style={[styles.subtitle, { color: colors.subtext }]}>
                 Select a conversation to begin a private, encrypted journey.
               </Text>
@@ -346,11 +343,6 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: 'bold',
     letterSpacing: 1,
-    marginBottom: 16,
-  },
-  headerImage: {
-    width: 200,
-    height: 50,
     marginBottom: 16,
   },
   subtitle: {

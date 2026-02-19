@@ -343,7 +343,7 @@ const NoChatSelected = () => {
           --mouse-x: 50%;
           --mouse-y: 50%;
         }
-      `}</style>
+      `}</style>  
     </div>
   );
 };

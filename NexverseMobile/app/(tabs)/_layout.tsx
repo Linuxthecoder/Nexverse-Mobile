@@ -40,27 +40,34 @@ export default function TabLayout() {
             backgroundColor: colors.background,
             borderTopWidth: 0,
             elevation: 0,
-            paddingTop: 8,
-            paddingBottom: Math.max(insets.bottom, 8),
-            height: 64 + Math.max(insets.bottom, 8),
+            paddingTop: 10,
+            paddingBottom: Math.max(insets.bottom, 10),
+            paddingHorizontal: 10,
+            height: 68 + Math.max(insets.bottom, 10),
             shadowOpacity: 0,
+            gap: 8, // Gap between tabs matching .nav { gap: 8px }
           },
           tabBarIndicatorStyle: {
-            backgroundColor: 'transparent', // Hide the line indicator for a bottom-tab look
+            backgroundColor: 'transparent',
           },
           tabBarShowLabel: true,
-          tabBarActiveTintColor: colors.tabIconSelected,
-          tabBarInactiveTintColor: colors.tabIconDefault,
+          tabBarActiveTintColor: colors.tint, // Gold primary (#D4AF37)
+          tabBarInactiveTintColor: colors.tabIconDefault, // Muted (#60646B)
           tabBarLabelStyle: {
-            fontSize: 10,
+            fontSize: 13, // Match .nav button { font-size: 13px }
             fontWeight: '500',
             textTransform: 'none',
+            marginTop: 6, // Match .nav button { gap: 6px }
           },
           tabBarIconStyle: {
             height: 24,
             width: 24,
           },
-          swipeEnabled: true, // Enable horizontal swiping
+          tabBarItemStyle: {
+            borderRadius: 10, // Match .nav button { border-radius: 10px }
+            paddingVertical: 8, // Match .nav button { padding: 8px }
+          },
+          swipeEnabled: true,
           animationEnabled: true,
         }}
       >
@@ -75,8 +82,7 @@ export default function TabLayout() {
           name="index"
           options={{
             title: 'Chats',
-            tabBarIcon: ({ color }: { color: string }) => renderTabIcon('message-circle', color),
-            // Badges are not natively supported in TopTabs the same way, simplified for now
+            tabBarIcon: ({ color }: { color: string }) => renderTabIcon('chats', color),
           }}
         />
         <MaterialTopTabs.Screen

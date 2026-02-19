@@ -1,25 +1,65 @@
 /**
- * WhatsApp-style color theme for Nexverse
+ * Nexverse Design System Theme
+ * Matching the web design with dark theme and gold accents
  */
 
 import { Platform } from 'react-native';
 
-// WhatsApp Color Palette
+// Nexverse Color Palette (matching CSS variables)
+export const NexverseColors = {
+  // Background colors
+  bgMain: '#121418',          // --bg-main: main background
+  bgSurface: '#1A1F25',       // --bg-surface: panels/containers
+  bgReceived: '#1E2430',      // --bg-received: received messages
+  inputBg: '#181C22',         // --input-bg: input bar
+  glass: 'rgba(255,255,255,0.02)', // --glass
+
+  // Gold accent colors
+  goldPrimary: '#D4AF37',     // --gold-primary: primary gold
+  goldAccent: '#CBA135',      // --gold-accent: warmer accent
+  goldGradFrom: '#E1C16E',    // --gold-grad-from: gradient start
+  goldGradTo: '#B8860B',      // --gold-grad-to: gradient end
+
+  // Text colors
+  textPrimary: '#E4E6EB',     // --text-primary: main text
+  textSecondary: '#9DA3A8',   // --text-secondary: secondary text
+  muted: '#60646B',           // --muted: muted UI
+
+  // Message bubbles
+  incomingBubble: '#1E2430',  // Dark received bubble
+  outgoingBubble: '#2A2515',  // Gold-tinted sent bubble
+
+  // Status indicators
+  checkmarkSingle: '#60646B',
+  checkmarkDouble: '#53BDEB',
+  checkmarkRead: '#53BDEB',
+
+  // UI elements
+  border: 'rgba(255,255,255,0.03)',
+  divider: 'rgba(255,255,255,0.05)',
+  unreadBadge: '#D4AF37',
+  timestamp: '#9DA3A8',
+
+  // Radius
+  radius: 14,
+};
+
+// Keep WhatsAppColors for backward compatibility
 export const WhatsAppColors = {
-  // Primary colors
-  teal: '#D4AF37',
-  tealDark: '#AA8C2C',
-  green: '#D4AF37',
+  // Primary colors (mapped to gold)
+  teal: NexverseColors.goldPrimary,
+  tealDark: NexverseColors.goldAccent,
+  green: NexverseColors.goldPrimary,
   blue: '#34B7F1',
 
   // Message bubbles
   incomingBubble: '#FFFFFF',
-  outgoingBubble: '#F5E8C4', // Gold bubble
+  outgoingBubble: '#F5E8C4',
 
   // Backgrounds
-  chatBackground: '#ECE5DD', // WhatsApp chat pattern background
+  chatBackground: '#ECE5DD',
   screenBackground: '#FFFFFF',
-  settingsBackground: '#F2F2F7', // iOS style
+  settingsBackground: '#F2F2F7',
 
   // Text colors
   textPrimary: '#000000',
@@ -29,7 +69,7 @@ export const WhatsAppColors = {
   // UI elements
   border: '#E9EDEF',
   divider: '#E9EDEF',
-  unreadBadge: '#D4AF37',
+  unreadBadge: NexverseColors.goldPrimary,
   timestamp: '#667781',
 
   // Status indicators
@@ -42,28 +82,28 @@ export const WhatsAppColors = {
   inputBorder: '#D1D7DB',
 
   // Icons
-  iconActive: '#D4AF37',
+  iconActive: NexverseColors.goldPrimary,
   iconInactive: '#8696A0',
 };
 
 const LightColors = {
   text: '#000000',
   background: '#FFFFFF',
-  tint: WhatsAppColors.teal,
+  tint: NexverseColors.goldPrimary,
   icon: WhatsAppColors.textSecondary,
   tabIconDefault: WhatsAppColors.iconInactive,
-  tabIconSelected: WhatsAppColors.teal,
+  tabIconSelected: NexverseColors.goldPrimary,
   border: WhatsAppColors.border,
 
   // Chat specific
   chatBackground: WhatsAppColors.chatBackground,
   incomingMessage: WhatsAppColors.incomingBubble,
-  outgoingMessage: WhatsAppColors.outgoingBubble,
+  outgoingMessage: '#F5E8C4',
   messageText: WhatsAppColors.textPrimary,
   timestamp: WhatsAppColors.timestamp,
 
   // UI elements
-  unreadBadge: WhatsAppColors.unreadBadge,
+  unreadBadge: NexverseColors.goldPrimary,
   checkmark: WhatsAppColors.checkmarkDouble,
   inputBackground: WhatsAppColors.inputBackground,
   divider: WhatsAppColors.divider,
@@ -71,27 +111,36 @@ const LightColors = {
 };
 
 const DarkColors = {
-  text: '#E9EDEF',
-  background: '#080f14ff',
-  tint: WhatsAppColors.green,
-  icon: '#8696A0',
-  tabIconDefault: '#8696A0',
-  tabIconSelected: WhatsAppColors.green,
-  border: '#2A3942',
+  // Main colors (Nexverse Design System)
+  text: NexverseColors.textPrimary,           // #E4E6EB
+  background: NexverseColors.bgMain,          // #121418
+  tint: NexverseColors.goldPrimary,           // #D4AF37
+  icon: NexverseColors.textSecondary,         // #9DA3A8
+  tabIconDefault: NexverseColors.muted,       // #60646B
+  tabIconSelected: NexverseColors.goldPrimary, // #D4AF37
+  border: NexverseColors.border,
 
   // Chat specific
-  chatBackground: '#0B141A',
-  incomingMessage: '#1F2C34',
-  outgoingMessage: '#423611',
-  messageText: '#E9EDEF',
-  timestamp: '#8696A0',
+  chatBackground: NexverseColors.bgMain,      // #121418
+  incomingMessage: NexverseColors.bgReceived, // #1E2430
+  outgoingMessage: NexverseColors.outgoingBubble, // Gold-tinted
+  messageText: NexverseColors.textPrimary,    // #E4E6EB
+  timestamp: NexverseColors.textSecondary,    // #9DA3A8
 
   // UI elements
-  unreadBadge: WhatsAppColors.green,
+  unreadBadge: NexverseColors.goldPrimary,    // #D4AF37
   checkmark: '#53BDEB',
-  inputBackground: '#1F2C34',
-  divider: '#2A3942',
+  inputBackground: NexverseColors.inputBg,    // #181C22
+  divider: NexverseColors.divider,
   error: '#EF4444',
+
+  // Surface colors (for cards, panels, etc.)
+  surface: NexverseColors.bgSurface,          // #1A1F25
+  surfaceElevated: NexverseColors.bgReceived, // #1E2430
+
+  // Gold gradient colors
+  gradientStart: NexverseColors.goldGradFrom, // #E1C16E
+  gradientEnd: NexverseColors.goldGradTo,     // #B8860B
 };
 
 // Define types for Colors
